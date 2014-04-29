@@ -1,0 +1,305 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JaxbMapper</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.betelnut.modules.mapper</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JaxbMapper (org.betelnut.modules.mapper)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JaxbMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.7%
+  </span>
+  <span class="absValue">
+    (8/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63%
+  </span>
+  <span class="absValue">
+    (29/ 46)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">JaxbMapper$CollectionWrapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">JaxbMapper$CollectionWrapper$JaxbAccessorF_collection</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (2/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (3/ 5)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    73.3%
+  </span>
+  <span class="absValue">
+    (11/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.5%
+  </span>
+  <span class="absValue">
+    (33/ 52)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.betelnut.modules.mapper;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.apache.commons.lang3.StringUtils;
+<i>4</i>&nbsp;import org.apache.commons.lang3.Validate;
+<i>5</i>&nbsp;import org.betelnut.modules.utils.Exceptions;
+<i>6</i>&nbsp;import org.betelnut.modules.utils.Reflections;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.xml.bind.*;
+<i>9</i>&nbsp;import javax.xml.bind.annotation.XmlAnyElement;
+<i>10</i>&nbsp;import javax.xml.namespace.QName;
+<i>11</i>&nbsp;import java.io.StringReader;
+<i>12</i>&nbsp;import java.io.StringWriter;
+<i>13</i>&nbsp;import java.util.Collection;
+<i>14</i>&nbsp;import java.util.concurrent.ConcurrentHashMap;
+<i>15</i>&nbsp;import java.util.concurrent.ConcurrentMap;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;/**
+<i>18</i>&nbsp; * JavaBean&lt;-&gt;Xml
+<i>19</i>&nbsp; *
+<i>20</i>&nbsp; * Support for root object is collection type.
+<i>21</i>&nbsp; * 在创建时需要设定所有需要序列化的ROOT对象的Class
+<i>22</i>&nbsp; * 特别支持Root对象是Collection的情形
+<i>23</i>&nbsp; *
+<i>24</i>&nbsp; * @author James
+<i>25</i>&nbsp; * @version 1.0-SNAPSHOT
+<i>26</i>&nbsp; * @since 2014-04-12
+<i>27</i>&nbsp; */
+<b class="nc"><i>28</i>&nbsp;public class JaxbMapper {</b>
+<b class="fc"><i>29</i>&nbsp;    private static ConcurrentMap&lt;Class, JAXBContext&gt; jaxbContexts = new ConcurrentHashMap&lt;Class, JAXBContext&gt;();</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /**
+<i>32</i>&nbsp;     * Java Object -&gt; xml without encoding.
+<i>33</i>&nbsp;     *
+<i>34</i>&nbsp;     * @param root Java object
+<i>35</i>&nbsp;     * @return xml string object
+<i>36</i>&nbsp;     */
+<b class="fc"><i>37</i>&nbsp;    public static String toXml(Object root) {</b>
+<b class="pc"><i>38</i>&nbsp;        Class clazz = Reflections.getUserClass(root);</b>
+<b class="nc"><i>39</i>&nbsp;        return toXml(root, clazz, null);</b>
+<i>40</i>&nbsp;    }
+<b class="fc"><i>41</i>&nbsp;</b>
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * 转换Object-&gt;Xml，根据相应的编码格式Encoding
+<i>44</i>&nbsp;     *
+<b class="nc"><i>45</i>&nbsp;     * @param root 待转换的Object对象</b>
+<b class="nc"><i>46</i>&nbsp;     * @param encoding 编码格式</b>
+<i>47</i>&nbsp;     * @return String 类型的Xml对象
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    public static String toXml(Object root, String encoding) {
+<b class="fc"><i>50</i>&nbsp;        Class clazz = Reflections.getUserClass(root);</b>
+<b class="fc"><i>51</i>&nbsp;        return toXml(root, clazz, encoding);</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /**
+<i>55</i>&nbsp;     * 转换Object-&gt;Xml，根据相应的编码格式Encoding
+<i>56</i>&nbsp;     *
+<i>57</i>&nbsp;     * @param root 待转换的Object对象
+<i>58</i>&nbsp;     * @param clazz 待转换的Class对象
+<i>59</i>&nbsp;     * @param encoding 编码格式
+<i>60</i>&nbsp;     * @return String 类型的Xml对象
+<i>61</i>&nbsp;     */
+<i>62</i>&nbsp;    public static String toXml(Object root, Class clazz, String encoding) {
+<i>63</i>&nbsp;        try {
+<b class="fc"><i>64</i>&nbsp;            StringWriter writer = new StringWriter();</b>
+<b class="fc"><i>65</i>&nbsp;            createMarShaller(clazz, encoding).marshal(root, writer);</b>
+<b class="fc"><i>66</i>&nbsp;            return writer.toString();</b>
+<b class="nc"><i>67</i>&nbsp;        } catch (JAXBException e) {</b>
+<b class="nc"><i>68</i>&nbsp;            throw Exceptions.unchecked(e);</b>
+<i>69</i>&nbsp;        }
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     * 转换Collection-&gt;Xml对象
+<i>74</i>&nbsp;     *
+<i>75</i>&nbsp;     * @param root 待转换的Object对象
+<i>76</i>&nbsp;     * @param rootName 待转换的Class对象
+<i>77</i>&nbsp;     * @param clazz Class对象
+<i>78</i>&nbsp;     * @return Xml
+<i>79</i>&nbsp;     */
+<i>80</i>&nbsp;    public static String toXml(Collection&lt;?&gt; root, String rootName, Class clazz) {
+<b class="nc"><i>81</i>&nbsp;        return toXml(root, rootName, clazz, null);</b>
+<i>82</i>&nbsp;    }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    /**
+<i>85</i>&nbsp;     * 转换Collection-&gt;Xml对象方法
+<i>86</i>&nbsp;     *
+<i>87</i>&nbsp;     * @param root Collection对象
+<i>88</i>&nbsp;     * @param rootName Xml的根节点名称
+<i>89</i>&nbsp;     * @param clazz Collection中的节点对象Class
+<i>90</i>&nbsp;     * @param encoding Xml的编码格式
+<i>91</i>&nbsp;     * @return Xml对象
+<i>92</i>&nbsp;     */
+<i>93</i>&nbsp;    public static String toXml(Collection&lt;?&gt; root, String rootName, Class clazz, String encoding) {
+<i>94</i>&nbsp;        try {
+<b class="fc"><i>95</i>&nbsp;            CollectionWrapper wrapper = new CollectionWrapper();</b>
+<b class="fc"><i>96</i>&nbsp;            wrapper.collection = root;</b>
+<i>97</i>&nbsp;
+<b class="fc"><i>98</i>&nbsp;            JAXBElement&lt;CollectionWrapper&gt; wrapperElement = new JAXBElement&lt;CollectionWrapper&gt;(new QName(rootName),</b>
+<i>99</i>&nbsp;                    CollectionWrapper.class, wrapper);
+<b class="fc"><i>100</i>&nbsp;            StringWriter writer = new StringWriter();</b>
+<b class="fc"><i>101</i>&nbsp;            createMarShaller(clazz, encoding).marshal(wrapperElement, writer);</b>
+<i>102</i>&nbsp;
+<b class="fc"><i>103</i>&nbsp;            return writer.toString();</b>
+<b class="nc"><i>104</i>&nbsp;        } catch (JAXBException e) {</b>
+<b class="nc"><i>105</i>&nbsp;            throw Exceptions.unchecked(e);</b>
+<i>106</i>&nbsp;        }
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    public static &lt;T&gt; T fromXml(String xml, Class&lt;T&gt; clazz) {
+<i>110</i>&nbsp;        try {
+<b class="fc"><i>111</i>&nbsp;            StringReader reader = new StringReader(xml);</b>
+<b class="fc"><i>112</i>&nbsp;            return (T) createUnmarshaller(clazz).unmarshal(reader);</b>
+<b class="nc"><i>113</i>&nbsp;        } catch (JAXBException e) {</b>
+<b class="nc"><i>114</i>&nbsp;            throw Exceptions.unchecked(e);</b>
+<i>115</i>&nbsp;        }
+<i>116</i>&nbsp;    }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    public static Unmarshaller createUnmarshaller(Class clazz) {
+<i>120</i>&nbsp;        try {
+<b class="fc"><i>121</i>&nbsp;            JAXBContext jaxbContext = getJaxbContext(clazz);</b>
+<b class="fc"><i>122</i>&nbsp;            return jaxbContext.createUnmarshaller();</b>
+<b class="nc"><i>123</i>&nbsp;        } catch (JAXBException e) {</b>
+<b class="nc"><i>124</i>&nbsp;            throw Exceptions.unchecked(e);</b>
+<i>125</i>&nbsp;        }
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;    }
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    /**
+<i>130</i>&nbsp;     * 创建Marshaller对象
+<i>131</i>&nbsp;     *
+<i>132</i>&nbsp;     * @param clazz
+<i>133</i>&nbsp;     * @param encoding
+<i>134</i>&nbsp;     * @return
+<i>135</i>&nbsp;     */
+<i>136</i>&nbsp;    public static Marshaller createMarShaller(Class clazz, String encoding) {
+<i>137</i>&nbsp;        try {
+<b class="fc"><i>138</i>&nbsp;            JAXBContext jaxbContext = getJaxbContext(clazz);</b>
+<i>139</i>&nbsp;
+<b class="fc"><i>140</i>&nbsp;            Marshaller marshaller = jaxbContext.createMarshaller();</b>
+<i>141</i>&nbsp;
+<b class="fc"><i>142</i>&nbsp;            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);</b>
+<i>143</i>&nbsp;
+<b class="fc"><i>144</i>&nbsp;            if (StringUtils.isNotBlank(encoding)) {</b>
+<b class="fc"><i>145</i>&nbsp;                marshaller.setProperty(Marshaller.JAXB_ENCODING, encoding);</b>
+<i>146</i>&nbsp;            }
+<i>147</i>&nbsp;
+<b class="fc"><i>148</i>&nbsp;            return marshaller;</b>
+<b class="nc"><i>149</i>&nbsp;        } catch (JAXBException e) {</b>
+<b class="nc"><i>150</i>&nbsp;            throw Exceptions.unchecked(e);</b>
+<i>151</i>&nbsp;        }
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    }
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;    protected static JAXBContext getJaxbContext(Class clazz) {
+<b class="fc"><i>156</i>&nbsp;        Validate.notNull(clazz, &quot;&#39;clazz&#39; must not be null&quot;);</b>
+<b class="fc"><i>157</i>&nbsp;        JAXBContext jaxbContext = jaxbContexts.get(clazz);</b>
+<i>158</i>&nbsp;
+<b class="fc"><i>159</i>&nbsp;        if (jaxbContext == null) {</b>
+<i>160</i>&nbsp;            try {
+<b class="fc"><i>161</i>&nbsp;                jaxbContext = jaxbContext.newInstance(clazz, CollectionWrapper.class);</b>
+<b class="fc"><i>162</i>&nbsp;                jaxbContexts.putIfAbsent(clazz, jaxbContext);</b>
+<b class="nc"><i>163</i>&nbsp;            } catch (JAXBException e) {</b>
+<b class="nc"><i>164</i>&nbsp;                throw new RuntimeException(&quot;Could not instantiate JAXBContext for class[&quot; + clazz + &quot;]&quot; +</b>
+<i>165</i>&nbsp;                        e.getMessage(), e);
+<b class="fc"><i>166</i>&nbsp;            }</b>
+<i>167</i>&nbsp;        }
+<i>168</i>&nbsp;
+<b class="fc"><i>169</i>&nbsp;        return jaxbContext;</b>
+<i>170</i>&nbsp;    }
+<i>171</i>&nbsp;
+<b class="pc"><i>172</i>&nbsp;    public static class CollectionWrapper {</b>
+<i>173</i>&nbsp;        @XmlAnyElement
+<i>174</i>&nbsp;        protected Collection&lt;?&gt; collection;
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;    }
+<i>177</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2014-04-19 17:49</div>
+</div>
+</body>
+</html>

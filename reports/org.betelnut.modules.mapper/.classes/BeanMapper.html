@@ -1,0 +1,160 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BeanMapper</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.betelnut.modules.mapper</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BeanMapper (org.betelnut.modules.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BeanMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/ 11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.betelnut.modules.mapper;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.google.common.collect.Lists;
+<i>4</i>&nbsp;import org.dozer.DozerBeanMapper;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.Collection;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * Simple Dozer util class. Bean&lt;-&gt;Bean mapper:
+<i>11</i>&nbsp; *
+<i>12</i>&nbsp; * 1. Take the singleton Mapper class.
+<i>13</i>&nbsp; * 2. Convert the return type.
+<i>14</i>&nbsp; * 3. Convert the collection&#39;s all object.
+<i>15</i>&nbsp; * 4. Copy A object to B object and create new method.
+<i>16</i>&nbsp; *
+<i>17</i>&nbsp; * Chinese Specification:
+<i>18</i>&nbsp; * 1. 持有Mapper的单例.
+<i>19</i>&nbsp; * 2. 返回值类型转换.
+<i>20</i>&nbsp; * 3. 批量转换Collection中的所有对象.
+<i>21</i>&nbsp; * 4. 区分创建新的B对象与将对象A值复制到已存在的B对象两种函数.
+<i>22</i>&nbsp; *
+<i>23</i>&nbsp; * @author James
+<i>24</i>&nbsp; * @version 1.0-SNAPSHOT
+<i>25</i>&nbsp; * @since 2014-04-12
+<i>26</i>&nbsp; */
+<b class="fc"><i>27</i>&nbsp;public class BeanMapper {</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * Dozer singleton object, avoid create serial objects.
+<i>31</i>&nbsp;     * 持有Dozer单例, 避免重复创建DozerMapper消耗资源.
+<i>32</i>&nbsp;     */
+<b class="fc"><i>33</i>&nbsp;    private static DozerBeanMapper dozer = new DozerBeanMapper();</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    /**
+<i>36</i>&nbsp;     * Basic map method
+<i>37</i>&nbsp;     * 基于Dozer转换对象的类型.
+<i>38</i>&nbsp;     *
+<i>39</i>&nbsp;     * @param source source object
+<i>40</i>&nbsp;     * @param destinationClass destination class
+<i>41</i>&nbsp;     * @param &lt;T&gt; return type...
+<i>42</i>&nbsp;     * @return new object which copped object value
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    public static &lt;T&gt; T map(Object source, Class&lt;T&gt; destinationClass) {
+<b class="fc"><i>45</i>&nbsp;        return dozer.map(source, destinationClass);</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /**
+<i>49</i>&nbsp;     *
+<i>50</i>&nbsp;     * copy collection object
+<i>51</i>&nbsp;     *
+<i>52</i>&nbsp;     * @param sourceList source collection object
+<i>53</i>&nbsp;     * @param destinationClass destination collection class
+<i>54</i>&nbsp;     * @param &lt;T&gt; return type
+<i>55</i>&nbsp;     * @return new collection object
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; mapList(Collection sourceList, Class&lt;T&gt; destinationClass) {
+<b class="fc"><i>58</i>&nbsp;        List&lt;T&gt; destinationList = Lists.newArrayList();</b>
+<b class="fc"><i>59</i>&nbsp;        for (Object sourceObject : sourceList) {</b>
+<b class="fc"><i>60</i>&nbsp;            T destinationObject = dozer.map(sourceObject, destinationClass);</b>
+<b class="fc"><i>61</i>&nbsp;            destinationList.add(destinationObject);</b>
+<b class="fc"><i>62</i>&nbsp;        }</b>
+<b class="fc"><i>63</i>&nbsp;        return destinationList;</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * copy method, copy the source object field value to destination object.
+<i>68</i>&nbsp;     *
+<i>69</i>&nbsp;     * @param source source object
+<i>70</i>&nbsp;     * @param destinationObject destination object
+<i>71</i>&nbsp;     */
+<i>72</i>&nbsp;    public static void copy(Object source, Object destinationObject) {
+<b class="fc"><i>73</i>&nbsp;        dozer.map(source, destinationObject);</b>
+<b class="fc"><i>74</i>&nbsp;    }</b>
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2014-04-19 17:49</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Encodes</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.betelnut.modules.utils</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Encodes (org.betelnut.modules.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Encodes</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.9%
+  </span>
+  <span class="absValue">
+    (13/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    69.6%
+  </span>
+  <span class="absValue">
+    (16/ 23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.betelnut.modules.utils;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.apache.commons.codec.DecoderException;
+<i>4</i>&nbsp;import org.apache.commons.codec.binary.Base64;
+<i>5</i>&nbsp;import org.apache.commons.codec.binary.Hex;
+<i>6</i>&nbsp;import org.apache.commons.lang3.StringEscapeUtils;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.io.UnsupportedEncodingException;
+<i>9</i>&nbsp;import java.net.URLDecoder;
+<i>10</i>&nbsp;import java.net.URLEncoder;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; * 封装各种格式的编码解码工具类.
+<i>14</i>&nbsp; * 
+<i>15</i>&nbsp; * 1.Commons-Codec的 hex/base64 编码
+<i>16</i>&nbsp; * 2.自制的base62 编码
+<i>17</i>&nbsp; * 3.Commons-Lang的xml/html escape
+<i>18</i>&nbsp; * 4.JDK提供的URLEncoder
+<i>19</i>&nbsp; */
+<b class="nc"><i>20</i>&nbsp;public class Encodes {</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;	private static final String DEFAULT_URL_ENCODING = &quot;UTF-8&quot;;
+<b class="fc"><i>23</i>&nbsp;	private static final char[] BASE62 = &quot;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&quot;.toCharArray();</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;	/**
+<i>26</i>&nbsp;	 * Hex编码.
+<i>27</i>&nbsp;	 */
+<i>28</i>&nbsp;	public static String encodeHex(byte[] input) {
+<b class="fc"><i>29</i>&nbsp;		return Hex.encodeHexString(input);</b>
+<i>30</i>&nbsp;	}
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;	/**
+<i>33</i>&nbsp;	 * Hex解码.
+<i>34</i>&nbsp;	 */
+<i>35</i>&nbsp;	public static byte[] decodeHex(String input) {
+<i>36</i>&nbsp;		try {
+<b class="fc"><i>37</i>&nbsp;			return Hex.decodeHex(input.toCharArray());</b>
+<b class="nc"><i>38</i>&nbsp;		} catch (DecoderException e) {</b>
+<b class="nc"><i>39</i>&nbsp;			throw Exceptions.unchecked(e);</b>
+<i>40</i>&nbsp;		}
+<i>41</i>&nbsp;	}
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;	/**
+<i>44</i>&nbsp;	 * Base64编码.
+<i>45</i>&nbsp;	 */
+<i>46</i>&nbsp;	public static String encodeBase64(byte[] input) {
+<b class="fc"><i>47</i>&nbsp;		return Base64.encodeBase64String(input);</b>
+<i>48</i>&nbsp;	}
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;	/**
+<i>51</i>&nbsp;	 * Base64编码, URL安全(将Base64中的URL非法字符&#39;+&#39;和&#39;/&#39;转为&#39;-&#39;和&#39;_&#39;, 见RFC3548).
+<i>52</i>&nbsp;	 */
+<i>53</i>&nbsp;	public static String encodeUrlSafeBase64(byte[] input) {
+<b class="fc"><i>54</i>&nbsp;		return Base64.encodeBase64URLSafeString(input);</b>
+<i>55</i>&nbsp;	}
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;	/**
+<i>58</i>&nbsp;	 * Base64解码.
+<i>59</i>&nbsp;	 */
+<i>60</i>&nbsp;	public static byte[] decodeBase64(String input) {
+<b class="fc"><i>61</i>&nbsp;		return Base64.decodeBase64(input);</b>
+<i>62</i>&nbsp;	}
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;	/**
+<i>65</i>&nbsp;	 * Base62编码。
+<i>66</i>&nbsp;	 */
+<i>67</i>&nbsp;	public static String encodeBase62(byte[] input) {
+<b class="fc"><i>68</i>&nbsp;		char[] chars = new char[input.length];</b>
+<b class="fc"><i>69</i>&nbsp;		for (int i = 0; i &lt; input.length; i++) {</b>
+<b class="fc"><i>70</i>&nbsp;			chars[i] = BASE62[(input[i] &amp; 0xFF) % BASE62.length];</b>
+<i>71</i>&nbsp;		}
+<b class="fc"><i>72</i>&nbsp;		return new String(chars);</b>
+<i>73</i>&nbsp;	}
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;	/**
+<i>76</i>&nbsp;	 * Html 转码.
+<i>77</i>&nbsp;	 */
+<i>78</i>&nbsp;	public static String escapeHtml(String html) {
+<b class="fc"><i>79</i>&nbsp;		return StringEscapeUtils.escapeHtml4(html);</b>
+<i>80</i>&nbsp;	}
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;	/**
+<i>83</i>&nbsp;	 * Html 解码.
+<i>84</i>&nbsp;	 */
+<i>85</i>&nbsp;	public static String unescapeHtml(String htmlEscaped) {
+<b class="fc"><i>86</i>&nbsp;		return StringEscapeUtils.unescapeHtml4(htmlEscaped);</b>
+<i>87</i>&nbsp;	}
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;	/**
+<i>90</i>&nbsp;	 * Xml 转码.
+<i>91</i>&nbsp;	 */
+<i>92</i>&nbsp;	public static String escapeXml(String xml) {
+<b class="fc"><i>93</i>&nbsp;		return StringEscapeUtils.escapeXml(xml);</b>
+<i>94</i>&nbsp;	}
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;	/**
+<i>97</i>&nbsp;	 * Xml 解码.
+<i>98</i>&nbsp;	 */
+<i>99</i>&nbsp;	public static String unescapeXml(String xmlEscaped) {
+<b class="fc"><i>100</i>&nbsp;		return StringEscapeUtils.unescapeXml(xmlEscaped);</b>
+<i>101</i>&nbsp;	}
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;	/**
+<i>104</i>&nbsp;	 * URL 编码, Encode默认为UTF-8.
+<i>105</i>&nbsp;	 */
+<i>106</i>&nbsp;	public static String urlEncode(String part) {
+<i>107</i>&nbsp;		try {
+<b class="fc"><i>108</i>&nbsp;			return URLEncoder.encode(part, DEFAULT_URL_ENCODING);</b>
+<b class="nc"><i>109</i>&nbsp;		} catch (UnsupportedEncodingException e) {</b>
+<b class="nc"><i>110</i>&nbsp;			throw Exceptions.unchecked(e);</b>
+<i>111</i>&nbsp;		}
+<i>112</i>&nbsp;	}
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;	/**
+<i>115</i>&nbsp;	 * URL 解码, Encode默认为UTF-8.
+<i>116</i>&nbsp;	 */
+<i>117</i>&nbsp;	public static String urlDecode(String part) {
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;		try {
+<b class="fc"><i>120</i>&nbsp;			return URLDecoder.decode(part, DEFAULT_URL_ENCODING);</b>
+<b class="nc"><i>121</i>&nbsp;		} catch (UnsupportedEncodingException e) {</b>
+<b class="nc"><i>122</i>&nbsp;			throw Exceptions.unchecked(e);</b>
+<i>123</i>&nbsp;		}
+<i>124</i>&nbsp;	}
+<i>125</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2014-04-19 17:49</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,407 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Reflections</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.betelnut.modules.utils</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Reflections (org.betelnut.modules.utils)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Reflections</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.1%
+  </span>
+  <span class="absValue">
+    (16/ 17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83%
+  </span>
+  <span class="absValue">
+    (78/ 94)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.betelnut.modules.utils;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.apache.commons.lang3.StringUtils;
+<i>4</i>&nbsp;import org.apache.commons.lang3.Validate;
+<i>5</i>&nbsp;import org.slf4j.Logger;
+<i>6</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.lang.reflect.*;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * Reflect tool
+<i>12</i>&nbsp; *
+<i>13</i>&nbsp; * &lt;p/&gt;
+<i>14</i>&nbsp; * Provide getter/setter, view private field, invoke private method, get generic Class object
+<i>15</i>&nbsp; * get real object which a class is &#39;AOPed&#39;.
+<i>16</i>&nbsp; *
+<i>17</i>&nbsp; * @author James
+<i>18</i>&nbsp; * @version 1.0-SNAPSHOT
+<i>19</i>&nbsp; * @since 2014-04-12
+<i>20</i>&nbsp; */
+<b class="nc"><i>21</i>&nbsp;public class Reflections {</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /**
+<i>24</i>&nbsp;     * setter method name prefix
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    private static final String SETTER_PREFIX = &quot;set&quot;;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * getter method name prefix
+<i>30</i>&nbsp;     */
+<i>31</i>&nbsp;    private static final String GETTER_PREFIX = &quot;get&quot;;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    /**
+<i>34</i>&nbsp;     * cglib proxy class separator
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    private static final String CGLIB_CLASS_SEPARATOR = &quot;$$&quot;;
+<i>37</i>&nbsp;
+<b class="fc"><i>38</i>&nbsp;    private static Logger logger = LoggerFactory.getLogger(Reflections.class);</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /**
+<i>41</i>&nbsp;     * Invoke getter method.
+<i>42</i>&nbsp;     *
+<i>43</i>&nbsp;     * @param obj the object which need invoke getter method
+<i>44</i>&nbsp;     * @param propertyName field name
+<i>45</i>&nbsp;     * @return the obj after invoke getter method return object
+<i>46</i>&nbsp;     */
+<i>47</i>&nbsp;    public static Object invokeGetter(Object obj, String propertyName) {
+<b class="fc"><i>48</i>&nbsp;        String getterMethodName = GETTER_PREFIX + StringUtils.capitalize(propertyName);</b>
+<b class="fc"><i>49</i>&nbsp;        return invokeMethod(obj, getterMethodName, new Class[] {}, new Object[] {});</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * Invoke setter method
+<i>54</i>&nbsp;     *
+<i>55</i>&nbsp;     * @param obj the object which need invoke setter method
+<i>56</i>&nbsp;     * @param propertyName field name
+<i>57</i>&nbsp;     * @param value set value
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    public static void invokeSetter(Object obj, String propertyName, Object value) {
+<b class="fc"><i>60</i>&nbsp;        String setterMethodName = SETTER_PREFIX + StringUtils.capitalize(propertyName);</b>
+<b class="fc"><i>61</i>&nbsp;        invokeMethodByName(obj, setterMethodName, new Object[] {value});</b>
+<b class="fc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * Get field value directly, not by getter method.
+<i>66</i>&nbsp;     *
+<i>67</i>&nbsp;     * @param obj the object which field in
+<i>68</i>&nbsp;     * @param fieldName field name
+<i>69</i>&nbsp;     * @return the field value
+<i>70</i>&nbsp;     */
+<i>71</i>&nbsp;    public static Object getFieldValue(final Object obj, final String fieldName) {
+<b class="fc"><i>72</i>&nbsp;        Field field = getAccessibleField(obj, fieldName);</b>
+<b class="fc"><i>73</i>&nbsp;        if (field == null) {</b>
+<b class="fc"><i>74</i>&nbsp;            throw new IllegalArgumentException(&quot;Could not find field [&quot; + fieldName + &quot;] on target [&quot; + obj + &quot;]&quot;);</b>
+<i>75</i>&nbsp;        }
+<i>76</i>&nbsp;
+<b class="fc"><i>77</i>&nbsp;        Object result = null;</b>
+<i>78</i>&nbsp;        try {
+<b class="fc"><i>79</i>&nbsp;            result = field.get(obj);</b>
+<b class="nc"><i>80</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>81</i>&nbsp;            logger.error(&quot;Can&#39;t show up Exception {}&quot;, e.getMessage());</b>
+<b class="fc"><i>82</i>&nbsp;        }</b>
+<i>83</i>&nbsp;
+<b class="fc"><i>84</i>&nbsp;        return result;</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /**
+<i>88</i>&nbsp;     * Set field value directly, not by setter method.
+<i>89</i>&nbsp;     *
+<i>90</i>&nbsp;     * @param obj the object which field in
+<i>91</i>&nbsp;     * @param fieldName field name
+<i>92</i>&nbsp;     * @param value set value
+<i>93</i>&nbsp;     */
+<i>94</i>&nbsp;    public static void setFieldValue(final Object obj, final String fieldName, Object value) {
+<b class="fc"><i>95</i>&nbsp;        Field field = getAccessibleField(obj, fieldName);</b>
+<i>96</i>&nbsp;
+<b class="fc"><i>97</i>&nbsp;        if (field == null) {</b>
+<b class="fc"><i>98</i>&nbsp;            throw new IllegalArgumentException(&quot;Could not find field [&quot; + fieldName + &quot;] on target [&quot; + obj + &quot;]&quot;);</b>
+<i>99</i>&nbsp;        }
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;        try {
+<b class="fc"><i>102</i>&nbsp;            field.set(obj, value);</b>
+<b class="nc"><i>103</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>104</i>&nbsp;            logger.error(&quot;Can&#39;t show up Exception {}&quot;, e.getMessage());</b>
+<b class="fc"><i>105</i>&nbsp;        }</b>
+<i>106</i>&nbsp;
+<b class="fc"><i>107</i>&nbsp;    }</b>
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    /**
+<i>110</i>&nbsp;     * Invoke any method in the object.
+<i>111</i>&nbsp;     *
+<i>112</i>&nbsp;     * @param obj the object which need invoke method
+<i>113</i>&nbsp;     * @param methodName method name
+<i>114</i>&nbsp;     * @param parameterTypes the method parameter class array
+<i>115</i>&nbsp;     * @param args the method object parameter array
+<i>116</i>&nbsp;     * @return after invoke result
+<i>117</i>&nbsp;     */
+<i>118</i>&nbsp;    public static Object invokeMethod(final Object obj, final String methodName, final Class&lt;?&gt;[] parameterTypes,
+<i>119</i>&nbsp;                                      final Object[] args) {
+<b class="fc"><i>120</i>&nbsp;        Method method = getAccessibleMethod(obj, methodName, parameterTypes);</b>
+<i>121</i>&nbsp;
+<b class="fc"><i>122</i>&nbsp;        if (method == null) {</b>
+<b class="fc"><i>123</i>&nbsp;            throw new IllegalArgumentException(&quot;Could not find method [&quot; + methodName + &quot;] on target [&quot; + obj + &quot;]&quot;);</b>
+<i>124</i>&nbsp;        }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;        try {
+<b class="fc"><i>127</i>&nbsp;            return method.invoke(obj, args);</b>
+<b class="nc"><i>128</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>129</i>&nbsp;            throw convertReflectionExceptionToUnchecked(e);</b>
+<i>130</i>&nbsp;        }
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    /**
+<i>134</i>&nbsp;     * Invoke method by name, if the method is reloaded, invoke the first method.
+<i>135</i>&nbsp;     *
+<i>136</i>&nbsp;     * @param obj the object which need invoke method
+<i>137</i>&nbsp;     * @param methodName method name
+<i>138</i>&nbsp;     * @param args the method object parameter array
+<i>139</i>&nbsp;     * @return after invoke result
+<i>140</i>&nbsp;     */
+<i>141</i>&nbsp;    public static Object invokeMethodByName(final Object obj, final String methodName, final Object[] args) {
+<b class="fc"><i>142</i>&nbsp;        Method method = getAccessibleMethodByName(obj, methodName);</b>
+<b class="fc"><i>143</i>&nbsp;        if (method == null) {</b>
+<b class="fc"><i>144</i>&nbsp;            throw new IllegalArgumentException(&quot;Could not find method [&quot; + methodName + &quot;] on target [&quot; + obj + &quot;]&quot;);</b>
+<i>145</i>&nbsp;        }
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;        try {
+<b class="fc"><i>148</i>&nbsp;            return method.invoke(obj, args);</b>
+<b class="nc"><i>149</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>150</i>&nbsp;            throw convertReflectionExceptionToUnchecked(e);</b>
+<i>151</i>&nbsp;        }
+<i>152</i>&nbsp;    }
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;    /**
+<i>156</i>&nbsp;     * Get object&#39;s method ignore the method permission
+<i>157</i>&nbsp;     * even if the method is private.
+<i>158</i>&nbsp;     *
+<i>159</i>&nbsp;     * @param obj the object which method in
+<i>160</i>&nbsp;     * @param methodName method name
+<i>161</i>&nbsp;     * @param parameterTypes the method parameter class array
+<i>162</i>&nbsp;     * @return method
+<i>163</i>&nbsp;     */
+<i>164</i>&nbsp;    public static Method getAccessibleMethod(final Object obj, final String methodName,
+<i>165</i>&nbsp;                                             final Class&lt;?&gt;... parameterTypes) {
+<b class="fc"><i>166</i>&nbsp;        Validate.notNull(obj, &quot;object can&#39;t be null&quot;);</b>
+<b class="fc"><i>167</i>&nbsp;        Validate.notBlank(methodName, &quot;methodName can&#39;t be blank&quot;);</b>
+<i>168</i>&nbsp;
+<b class="fc"><i>169</i>&nbsp;        for (Class&lt;?&gt; searchType = obj.getClass(); searchType != Object.class; searchType = searchType.getSuperclass()) {</b>
+<i>170</i>&nbsp;            try {
+<b class="fc"><i>171</i>&nbsp;                Method method = searchType.getDeclaredMethod(methodName, parameterTypes);</b>
+<b class="fc"><i>172</i>&nbsp;                makeAccessible(method);</b>
+<b class="fc"><i>173</i>&nbsp;                return method;</b>
+<b class="fc"><i>174</i>&nbsp;            } catch (NoSuchMethodException e) {</b>
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;            }
+<i>177</i>&nbsp;        }
+<i>178</i>&nbsp;
+<b class="fc"><i>179</i>&nbsp;        return null;</b>
+<i>180</i>&nbsp;    }
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    public static Method getAccessibleMethodByName(final Object obj, final String methodName) {
+<b class="fc"><i>183</i>&nbsp;        Validate.notNull(obj, &quot;object can&#39;t be null&quot;);</b>
+<b class="fc"><i>184</i>&nbsp;        Validate.notBlank(methodName, &quot;methodName can&#39;t be blanck&quot;);</b>
+<i>185</i>&nbsp;
+<b class="fc"><i>186</i>&nbsp;        for (Class&lt;?&gt; searchType = obj.getClass(); searchType != Object.class; searchType = searchType.getSuperclass()) {</b>
+<b class="fc"><i>187</i>&nbsp;            Method[] methods = searchType.getDeclaredMethods();</b>
+<b class="fc"><i>188</i>&nbsp;            for (Method method : methods) {</b>
+<b class="fc"><i>189</i>&nbsp;                if (method.getName().equals(methodName)) {</b>
+<b class="fc"><i>190</i>&nbsp;                    makeAccessible(method);</b>
+<b class="fc"><i>191</i>&nbsp;                    return method;</b>
+<i>192</i>&nbsp;                }
+<i>193</i>&nbsp;            }
+<i>194</i>&nbsp;        }
+<i>195</i>&nbsp;
+<b class="fc"><i>196</i>&nbsp;        return null;</b>
+<i>197</i>&nbsp;    }
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    /**
+<i>200</i>&nbsp;     * Get object&#39;s field ignore the field premission
+<i>201</i>&nbsp;     * even if the method is protected or private
+<i>202</i>&nbsp;     *
+<i>203</i>&nbsp;     * @param obj the object which field in
+<i>204</i>&nbsp;     * @param fieldName field name
+<i>205</i>&nbsp;     * @return accessible field
+<i>206</i>&nbsp;     */
+<i>207</i>&nbsp;    public static Field getAccessibleField(final Object obj, final String fieldName) {
+<b class="fc"><i>208</i>&nbsp;        Validate.notNull(obj, &quot;object can&#39;t be null&quot;);</b>
+<b class="fc"><i>209</i>&nbsp;        Validate.notBlank(fieldName, &quot;fieldName can&#39;t be blank&quot;);</b>
+<b class="fc"><i>210</i>&nbsp;        for (Class&lt;?&gt; superClass = obj.getClass(); superClass != Object.class; superClass = superClass.getSuperclass()) {</b>
+<i>211</i>&nbsp;            try {
+<b class="fc"><i>212</i>&nbsp;                Field field = superClass.getDeclaredField(fieldName);</b>
+<b class="fc"><i>213</i>&nbsp;                makeAccessible(field);</b>
+<b class="fc"><i>214</i>&nbsp;                return field;</b>
+<b class="fc"><i>215</i>&nbsp;            } catch (NoSuchFieldException e) {</b>
+<i>216</i>&nbsp;
+<i>217</i>&nbsp;            }
+<i>218</i>&nbsp;        }
+<i>219</i>&nbsp;
+<b class="fc"><i>220</i>&nbsp;        return null;</b>
+<i>221</i>&nbsp;    }
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;    /**
+<i>224</i>&nbsp;     * Make the method accessible.
+<i>225</i>&nbsp;     *
+<i>226</i>&nbsp;     * @param method method
+<i>227</i>&nbsp;     */
+<i>228</i>&nbsp;    public static void makeAccessible(Method method) {
+<b class="fc"><i>229</i>&nbsp;        if ((!Modifier.isPublic(method.getModifiers()) || !Modifier.isPublic(method.getDeclaringClass().getModifiers()))</b>
+<i>230</i>&nbsp;                &amp;&amp; !method.isAccessible()) {
+<b class="fc"><i>231</i>&nbsp;            method.setAccessible(true);</b>
+<i>232</i>&nbsp;        }
+<b class="fc"><i>233</i>&nbsp;    }</b>
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;    /**
+<i>236</i>&nbsp;     * Make the field accessible.
+<i>237</i>&nbsp;     *
+<i>238</i>&nbsp;     * @param field field
+<i>239</i>&nbsp;     */
+<i>240</i>&nbsp;    public static void makeAccessible(Field field) {
+<b class="fc"><i>241</i>&nbsp;        if ((!Modifier.isPublic(field.getModifiers()) || !Modifier.isPublic(field.getDeclaringClass().getModifiers()) || Modifier</b>
+<i>242</i>&nbsp;                .isFinal(field.getModifiers())) &amp;&amp; !field.isAccessible()) {
+<b class="fc"><i>243</i>&nbsp;            field.setAccessible(true);</b>
+<i>244</i>&nbsp;        }
+<b class="fc"><i>245</i>&nbsp;    }</b>
+<i>246</i>&nbsp;
+<i>247</i>&nbsp;    /**
+<i>248</i>&nbsp;     * By reflection, get class define generic parameter
+<i>249</i>&nbsp;     * eg.
+<i>250</i>&nbsp;     * public UserDao extends HibernateDao&lt;User&gt;
+<i>251</i>&nbsp;     *
+<i>252</i>&nbsp;     * @param clazz the class to introspect
+<i>253</i>&nbsp;     * @param &lt;T&gt;
+<i>254</i>&nbsp;     * @return the first generic declaration, or Object.class if cannot be determined
+<i>255</i>&nbsp;     */
+<i>256</i>&nbsp;    public static &lt;T&gt; Class&lt;T&gt; getClassGenericType(final Class clazz) {
+<b class="fc"><i>257</i>&nbsp;        return getClassGenericType(clazz, 0);</b>
+<i>258</i>&nbsp;    }
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;    /**
+<i>261</i>&nbsp;     * 通过反射, 获得Class定义中声明的父类的泛型参数的类型.
+<i>262</i>&nbsp;     * 如无法找到, 返回Object.class.
+<i>263</i>&nbsp;     *
+<i>264</i>&nbsp;     * 如public UserDao extends HibernateDao&lt;User,Long&gt;
+<i>265</i>&nbsp;     *
+<i>266</i>&nbsp;     * @param clazz clazz The class to introspect
+<i>267</i>&nbsp;     * @param index the Index of the generic ddeclaration,start from 0.
+<i>268</i>&nbsp;     * @return the index generic declaration, or Object.class if cannot be determined
+<i>269</i>&nbsp;     */
+<i>270</i>&nbsp;    public static Class getClassGenericType(final Class clazz, final int index) {
+<b class="fc"><i>271</i>&nbsp;        Type genType = clazz.getGenericSuperclass();</b>
+<i>272</i>&nbsp;
+<b class="fc"><i>273</i>&nbsp;        if (!(genType instanceof ParameterizedType)) {</b>
+<b class="fc"><i>274</i>&nbsp;            logger.warn(clazz.getSimpleName() +&quot;&#39;s superclass note ParameterizedType&quot;);</b>
+<b class="fc"><i>275</i>&nbsp;            return Object.class;</b>
+<i>276</i>&nbsp;        }
+<i>277</i>&nbsp;
+<b class="fc"><i>278</i>&nbsp;        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();</b>
+<i>279</i>&nbsp;
+<b class="fc"><i>280</i>&nbsp;        if ((index &gt;= params.length) || (index &lt; 0)) {</b>
+<b class="nc"><i>281</i>&nbsp;            logger.warn(&quot;Index:&quot; + index + &quot;, Size of &quot; + clazz.getSimpleName() + &quot;&#39;s Parameterized Type:&quot;</b>
+<i>282</i>&nbsp;                    + params.length);
+<b class="nc"><i>283</i>&nbsp;            return Object.class;</b>
+<i>284</i>&nbsp;        }
+<i>285</i>&nbsp;
+<b class="fc"><i>286</i>&nbsp;        if (!(params[index] instanceof  Class)) {</b>
+<b class="nc"><i>287</i>&nbsp;            logger.warn(clazz.getSimpleName() + &quot; not set the actual class on superclass generic parameter&quot;);</b>
+<b class="nc"><i>288</i>&nbsp;            return Object.class;</b>
+<i>289</i>&nbsp;        }
+<b class="fc"><i>290</i>&nbsp;        return (Class) params[index];</b>
+<i>291</i>&nbsp;    }
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    public static Class&lt;?&gt; getUserClass(Object instance) {
+<b class="fc"><i>294</i>&nbsp;        Validate.notNull(instance, &quot;Instance must not be null&quot;);</b>
+<b class="fc"><i>295</i>&nbsp;        Class clazz = instance.getClass();</b>
+<b class="fc"><i>296</i>&nbsp;        if ((clazz != null) &amp;&amp; clazz.getName().contains(CGLIB_CLASS_SEPARATOR)) {</b>
+<b class="nc"><i>297</i>&nbsp;            Class&lt;?&gt; superClass = clazz.getSuperclass();</b>
+<b class="nc"><i>298</i>&nbsp;            if ((superClass != null) &amp;&amp; !Object.class.equals(superClass)) {</b>
+<b class="nc"><i>299</i>&nbsp;                return superClass;</b>
+<i>300</i>&nbsp;            }
+<i>301</i>&nbsp;        }
+<i>302</i>&nbsp;
+<b class="fc"><i>303</i>&nbsp;        return clazz;</b>
+<i>304</i>&nbsp;    }
+<i>305</i>&nbsp;
+<i>306</i>&nbsp;    /**
+<i>307</i>&nbsp;     * Convert reflection checked exception to unchecked exception.
+<i>308</i>&nbsp;     *
+<i>309</i>&nbsp;     * @param e exception parameter
+<i>310</i>&nbsp;     * @return RuntimeException object
+<i>311</i>&nbsp;     */
+<i>312</i>&nbsp;    public static RuntimeException convertReflectionExceptionToUnchecked(Exception e) {
+<b class="fc"><i>313</i>&nbsp;        if ((e instanceof IllegalAccessException) || (e instanceof IllegalArgumentException)</b>
+<i>314</i>&nbsp;                || (e instanceof NoSuchMethodException)) {
+<b class="fc"><i>315</i>&nbsp;            return new IllegalArgumentException(e);</b>
+<b class="fc"><i>316</i>&nbsp;        } else if (e instanceof InvocationTargetException) {</b>
+<b class="fc"><i>317</i>&nbsp;            return new RuntimeException(((InvocationTargetException) e).getTargetException());</b>
+<b class="fc"><i>318</i>&nbsp;        } else if (e instanceof RuntimeException) {</b>
+<b class="fc"><i>319</i>&nbsp;            return (RuntimeException) e;</b>
+<i>320</i>&nbsp;        }
+<i>321</i>&nbsp;
+<b class="fc"><i>322</i>&nbsp;        return new RuntimeException(&quot;Unexpected Checked Exception.&quot;, e);</b>
+<i>323</i>&nbsp;    }
+<i>324</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2014-04-19 17:49</div>
+</div>
+</body>
+</html>
