@@ -8,3 +8,7 @@ set MAVEN_OPTS=$MAVEN_OPTS -XX:MaxPermSize=128m
 echo "[Step 1] Install all betelnut modules to local maven repository."
 cd modules
 mvn clean install
+
+echo "[Step 2] Install archetype modules to local maven repository."
+cd support
+mvn clean install
