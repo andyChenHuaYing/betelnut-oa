@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Simple Dozer util class. Bean<->Bean mapper:
+ * Simple Dozer utils class. Bean<->Bean mapper:
  *
  * 1. Take the singleton Mapper class.
  * 2. Convert the return type.

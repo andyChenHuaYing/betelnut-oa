@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  *
- * Date provider, this util class is not for direct get the date value,
+ * Date provider, this utils class is not for direct get the date value,
  * we use it for test.
  *
  * @author James
@@ -21,7 +21,7 @@ public interface Clock {
     /**
      * Get current time.
      *
-     * @return java.util.Date type current time
+     * @return java.utils.Date type current time
      */
     Date getCurrentDate();
 
