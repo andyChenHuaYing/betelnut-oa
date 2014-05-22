@@ -37,7 +37,8 @@ fi
 MYSQL_INSTALL=`which mysql`
 if [ -z "$MYSQL_INSTALL" ]; then
     echo "Begin install MySQL Database to your computer ..."
-    sudo apt-get install mysql-server mysql-client
+    # Install mysql 5.5 version.
+    sudo apt-get install mysql-server-5.5 mysql-client-5.5
     sudo rm -f /etc/mysql/my.cnf
     # Copy the application mysql configuration file to local computer.
     sudo cp ~/software/mysql/my.cnf /etc/mysql/my.cnf
