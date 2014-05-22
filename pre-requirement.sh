@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # Install software which system is required.
+# This shell script just for Ubuntu Linux System.
+# Fedora, CentOS or other "yum" Linux System, you should install software by yourself.
+# In document folder, we provide Linux User-Guide.
 
 # Step 1: Install JDK
 mkdir ~/software/
@@ -52,5 +55,7 @@ if [ -z "$MVN_INSTALL" ]; then
     tar -xzf apache-maven-3.2.1-bin.tar.gz
     cd ~/software/apache-maven-3.2.1/
     echo export MVN_HOME=`pwd` >> ~/.bashrc
+    # Append Maven home configuration information after $PATH line.
+    sed -i -e '/export PATH=/ /s/$/:$MVN_HOME\/bin/' ~/.bashrc
     cd $BETELNUT_PATH
 fi
