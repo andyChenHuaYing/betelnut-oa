@@ -60,3 +60,15 @@ if [ -z "$MVN_INSTALL" ]; then
     sed -i -e '/export PATH=/ /s/$/:$MVN_HOME\/bin/' ~/.bashrc
     cd $BETELNUT_PATH
 fi
+
+# Step 4: Install MongoDB to local computer.
+MONGO_INSTALL=`which mongod`
+if [ -z "$MONGO_INSTALL" ]; then
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+    echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+    echo "Update the Ubuntu apt-get source list, it will spend serval minutes, please wait, do not close the terminal."
+    sudo apt-get update
+    # Now install MongoDB 2.6.1 version.
+    apt-get install mongodb-org=2.6.1 mongodb-org-server=2.6.1 mongodb-org-shell=2.6.1 mongodb-org-mongos=2.6.1 mongodb-org-tools=2.6.1
+    sudo /etc/init.d/mongod start
+fi
