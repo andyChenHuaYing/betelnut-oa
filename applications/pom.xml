@@ -11,6 +11,9 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <name>Betelnut :: Application</name>
+    <modules>
+        <module>hdfs</module>
+    </modules>
 
     <artifactId>betelnut-applications</artifactId>
 

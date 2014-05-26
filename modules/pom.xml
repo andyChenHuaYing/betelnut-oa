@@ -16,7 +16,6 @@
         <module>parent</module>
         <module>core</module>
         <module>metrics</module>
-        <module>hdfs</module>
         <module>fileserver</module>
     </modules>
 
