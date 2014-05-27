@@ -1,5 +1,8 @@
 package org.betelnut.application.hdfs.bean;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -8,7 +11,9 @@ import java.util.Calendar;
  *
  * @author James
  */
-public class Note implements Serializable {
+@Entity
+@Table(name = "bo_note")
+public class Note extends IdEntity implements Serializable {
     /** 创建时间 */
     private Calendar date;
     /** 创建者 */
@@ -17,6 +22,17 @@ public class Note implements Serializable {
     private String text;
     /** 所在路径 */
     private String path;
+
+    private Document document;
+
+    @ManyToOne
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
 
     public Calendar getDate() {
         return date;

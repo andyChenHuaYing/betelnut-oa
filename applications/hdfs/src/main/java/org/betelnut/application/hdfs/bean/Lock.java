@@ -1,5 +1,8 @@
 package org.betelnut.application.hdfs.bean;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -7,12 +10,25 @@ import java.io.Serializable;
  *
  * @author James
  */
-public class Lock implements Serializable {
+@Entity
+@Table(name = "bo_lock")
+public class Lock extends IdEntity implements Serializable {
 
     /** 所属者 */
     private String owner;
     /** 文件的路径 */
     private String notePath;
+
+    private Document document;
+
+    @OneToOne
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
 
     public String getOwner() {
         return owner;

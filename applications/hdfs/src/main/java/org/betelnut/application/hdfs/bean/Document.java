@@ -1,5 +1,8 @@
 package org.betelnut.application.hdfs.bean;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
@@ -7,8 +10,12 @@ import java.util.*;
  * 文件实体bean
  *
  * @author James
+ * jpa id generator:
+ * http://stackoverflow.com/questions/6356834/using-hibernate-uuidgenerator-via-annotations
  */
-public class Document implements Serializable, Comparable<Document> {
+@Entity
+@Table(name = "bo_document")
+public class Document extends IdEntity implements Serializable, Comparable<Document> {
 
     private static final String TYPE = "betelnut:document";
 
@@ -26,8 +33,6 @@ public class Document implements Serializable, Comparable<Document> {
     private boolean locked;
     /** 文件的上锁信息 */
     private Lock lockInfo;
-    /** 文件的uuid */
-    private String uuid;
     /** 是否可以转换成pdf */
     private boolean convertiableToPdf;
     /** 是否可以转换成swf */
@@ -85,20 +90,13 @@ public class Document implements Serializable, Comparable<Document> {
         this.locked = locked;
     }
 
+    @OneToOne
     public Lock getLockInfo() {
         return lockInfo;
     }
 
     public void setLockInfo(Lock lockInfo) {
         this.lockInfo = lockInfo;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public boolean isConvertiableToPdf() {
@@ -125,6 +123,7 @@ public class Document implements Serializable, Comparable<Document> {
         this.keywords = keywords;
     }
 
+    @OneToMany(mappedBy = "document")
     public List<Note> getNotes() {
         return notes;
     }
