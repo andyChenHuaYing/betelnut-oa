@@ -87,8 +87,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springside</groupId>
-            <artifactId>springside-core</artifactId>
+            <groupId>org.betelnut</groupId>
+            <artifactId>betelnut-core</artifactId>
             <classifier>tests</classifier>
         </dependency>
 
