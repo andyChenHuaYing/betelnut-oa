@@ -17,6 +17,7 @@
         <module>core</module>
         <module>metrics</module>
         <module>fileserver</module>
+        <module>extension</module>
     </modules>
 
     <artifactId>betelnut-modules</artifactId>

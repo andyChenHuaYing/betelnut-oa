@@ -11,7 +11,7 @@
 
     <properties>
         <!-- 主要依赖库的版本定义 -->
-        <springside.version>4.2.2.GA</springside.version>
+        <betelnut.version>1.0-SNAPSHOT</betelnut.version>
         <spring.version>4.0.2.RELEASE</spring.version>
         <hibernate.version>4.3.4.Final</hibernate.version>
         <mybatis.version>3.2.5</mybatis.version>
@@ -82,25 +82,32 @@
     <!-- 预定义依赖项的version,scope与exclusions,子项目中只需定义groupId 与  artifactId 即可 -->
     <dependencyManagement>
         <dependencies>
-            <!-- SPRINGSIDE MODULES begin -->
+
+            <!-- Betelnut Module Dependency Begin -->
             <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-core</artifactId>
-                <version>${springside.version}</version>
-                <scope>compile</scope>
+                <groupId>org.betelnut</groupId>
+                <artifactId>betelnut-core</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
+
             <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-extension</artifactId>
-                <version>${springside.version}</version>
-                <scope>compile</scope>
+                <groupId>org.betelnut</groupId>
+                <artifactId>betelnut-fileserver</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
+
             <dependency>
-                <groupId>org.springside</groupId>
-                <artifactId>springside-metrics</artifactId>
-                <version>${springside.version}</version>
+                <groupId>org.betelnut</groupId>
+                <artifactId>betelnut-hdfs</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
-            <!-- SPRINGSIDE MODULES end -->
+
+            <dependency>
+                <groupId>org.betelnut</groupId>
+                <artifactId>betelnut-metrics</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <!-- Betelnut Module Dependency end -->
 
             <!-- spring-->
             <!-- 纯粹为了exclude commons-loging -->
