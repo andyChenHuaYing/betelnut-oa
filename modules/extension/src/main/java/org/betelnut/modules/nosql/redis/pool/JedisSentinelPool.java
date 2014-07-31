@@ -3,7 +3,7 @@ package org.betelnut.modules.nosql.redis.pool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springside.modules.nosql.redis.JedisUtils;
+import org.betelnut.modules.nosql.redis.JedisUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;

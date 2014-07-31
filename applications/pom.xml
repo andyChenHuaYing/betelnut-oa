@@ -13,6 +13,7 @@
     <name>Betelnut :: Application</name>
     <modules>
         <module>hdfs</module>
+        <module>showcases</module>
     </modules>
 
     <artifactId>betelnut-applications</artifactId>

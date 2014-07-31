@@ -1,7 +1,8 @@
 package org.betelnut.modules.metrics;
 
-import org.betelnut.modules.metrics.utils.Clock;
 import org.junit.Test;
+import org.betelnut.modules.metrics.Timer.TimerContext;
+import org.betelnut.modules.metrics.utils.Clock.MockClock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,22 +10,24 @@ public class ExecutionTest {
 
 	@Test
 	public void normal() {
-		Clock.MockClock clock = new Clock.MockClock();
-		Execution.clock = clock;
+		MockClock clock = new MockClock();
+		Timer.clock = clock;
 		Counter.clock = clock;
-		Execution execution = new Execution(new Double[] { 90d });
+		Timer timer = new Timer(new Double[] { 90d });
 
-		Execution.ExecutionTimer timer = execution.start();
+		TimerContext timerContext = timer.start();
 		clock.increaseTime(200);
-		timer.stop();
+		timerContext.stop();
 
-		Execution.ExecutionTimer timer2 = execution.start();
+		TimerContext timer2 = timer.start();
 		clock.increaseTime(300);
 		timer2.stop();
 
-		ExecutionMetric metric = execution.calculateMetric();
+		TimerMetric metric = timer.calculateMetric();
 
 		assertThat(metric.counterMetric.totalCount).isEqualTo(2);
+		assertThat(metric.counterMetric.meanRate).isEqualTo(4);
+		assertThat(metric.counterMetric.lastCount).isEqualTo(2);
 		assertThat(metric.counterMetric.lastRate).isEqualTo(4);
 
 		assertThat(metric.histogramMetric.min).isEqualTo(200);

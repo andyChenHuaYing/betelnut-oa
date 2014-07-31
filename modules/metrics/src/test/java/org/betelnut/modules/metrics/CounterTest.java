@@ -1,14 +1,14 @@
 package org.betelnut.modules.metrics;
 
-import org.betelnut.modules.metrics.utils.Clock;
 import org.junit.Before;
 import org.junit.Test;
+import org.betelnut.modules.metrics.utils.Clock.MockClock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CounterTest {
 
-	private Clock.MockClock clock = new Clock.MockClock();
+	private MockClock clock = new MockClock();
 
 	@Before
 	public void setup() {
@@ -26,6 +26,7 @@ public class CounterTest {
 
 		CounterMetric metric = counter.calculateMetric();
 		assertThat(metric.totalCount).isEqualTo(60);
+		assertThat(metric.meanRate).isEqualTo(60);
 		assertThat(metric.lastCount).isEqualTo(60);
 		assertThat(metric.lastRate).isEqualTo(60);
 
@@ -34,6 +35,7 @@ public class CounterTest {
 		metric = counter.calculateMetric();
 
 		assertThat(metric.totalCount).isEqualTo(80);
+		assertThat(metric.meanRate).isEqualTo(40);
 		assertThat(metric.lastCount).isEqualTo(20);
 		assertThat(metric.lastRate).isEqualTo(20);
 	}

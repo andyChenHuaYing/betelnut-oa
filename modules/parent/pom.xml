@@ -104,10 +104,33 @@
 
             <dependency>
                 <groupId>org.betelnut</groupId>
+                <artifactId>betelnut-extension</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.betelnut</groupId>
                 <artifactId>betelnut-metrics</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
             <!-- Betelnut Module Dependency end -->
+
+            <!-- Betelnut Tests Begin -->
+            <dependency>
+                <groupId>org.betelnut</groupId>
+                <artifactId>betelnut-core</artifactId>
+                <version>${betelnut.version}</version>
+                <classifier>tests</classifier>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.betelnut</groupId>
+                <artifactId>betelnut-extension</artifactId>
+                <version>${betelnut.version}</version>
+                <classifier>tests</classifier>
+                <scope>test</scope>
+            </dependency>
+            <!-- Betelnut Tests End -->
 
             <!-- spring-->
             <!-- 纯粹为了exclude commons-loging -->

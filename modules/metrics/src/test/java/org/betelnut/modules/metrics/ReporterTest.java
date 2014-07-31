@@ -1,9 +1,10 @@
 package org.betelnut.modules.metrics;
 
-import org.betelnut.modules.metrics.report.*;
-import org.betelnut.modules.metrics.utils.Clock;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.betelnut.modules.metrics.Timer.TimerContext;
+import org.betelnut.modules.metrics.reporter.*;
+import org.betelnut.modules.metrics.utils.Clock.MockClock;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -36,9 +37,9 @@ public class ReporterTest {
 
 	private void runReport(Reporter reporter) {
 		MetricRegistry metricRegistry = new MetricRegistry();
-		Clock.MockClock clock = new Clock.MockClock();
+		MockClock clock = new MockClock();
 		Counter.clock = clock;
-		Execution.clock = clock;
+		Timer.clock = clock;
 
 		// counter
 		Counter counter = metricRegistry.counter(MetricRegistry.name("UserService", "getUser.counter"));
@@ -57,18 +58,18 @@ public class ReporterTest {
 			histogram2.update(i * 2);
 		}
 
-		// execution
-		Execution execution = metricRegistry.execution(MetricRegistry.name("UserService", "getUser.timer"));
+		// timer
+		Timer timer = metricRegistry.timer(MetricRegistry.name("UserService", "getUser.timer"));
 		for (int i = 1; i <= 10; i++) {
-			Execution.ExecutionTimer timer = execution.start();
+			TimerContext timerContext = timer.start();
 			clock.increaseTime(25);
-			timer.stop();
+			timerContext.stop();
 		}
-		Execution execution2 = metricRegistry.execution(MetricRegistry.name("UserService", "setUser.timer"));
+		Timer timer2 = metricRegistry.timer(MetricRegistry.name("UserService", "setUser.timer"));
 		for (int i = 1; i <= 10; i++) {
-			Execution.ExecutionTimer timer = execution2.start();
+			TimerContext timerContext = timer2.start();
 			clock.increaseTime(75);
-			timer.stop();
+			timerContext.stop();
 		}
 
 		// totally 2 seconds past

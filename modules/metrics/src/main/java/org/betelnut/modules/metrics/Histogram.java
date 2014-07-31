@@ -5,7 +5,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Histogram数据类型, 主要用于计算Latency.
+ * 报告Report间隔时间内Latency最小/最大，平均值，以及某些百分比的请求Latency小于的值。
+ */
 public class Histogram {
+
+	public HistogramMetric snapshot = new HistogramMetric();
 
 	private List<Long> measurements = new LinkedList<Long>();
 	private Double[] pcts;
@@ -22,6 +28,7 @@ public class Histogram {
 	}
 
 	public HistogramMetric calculateMetric() {
+		// 快照当前的数据，在计算时不阻塞新的metrics update.
 		List<Long> snapshotList = null;
 
 		synchronized (lock) {
@@ -33,6 +40,7 @@ public class Histogram {
 			return createEmptyMetric();
 		}
 
+		// 按数值大小排序，以快速支持百分比过滤
 		Collections.sort(snapshotList);
 
 		int count = snapshotList.size();
@@ -51,6 +59,19 @@ public class Histogram {
 			metric.pcts.put(pct, getPercent(snapshotList, count, pct));
 		}
 
+		snapshot = metric;
+		return metric;
+	}
+
+	private HistogramMetric createEmptyMetric() {
+		HistogramMetric metric = new HistogramMetric();
+		metric.min = 0;
+		metric.max = 0;
+		metric.mean = 0;
+		for (Double pct : pcts) {
+			metric.pcts.put(pct, 0L);
+		}
+
 		return metric;
 	}
 
@@ -67,18 +88,6 @@ public class Histogram {
 		}
 
 		return snapshotList.get((int) pos - 1);
-	}
-
-	private HistogramMetric createEmptyMetric() {
-		HistogramMetric metric = new HistogramMetric();
-		metric.min = 0;
-		metric.max = 0;
-		metric.mean = 0;
-		for (Double pct : pcts) {
-			metric.pcts.put(pct, 0L);
-		}
-
-		return metric;
 	}
 
 	@Override
